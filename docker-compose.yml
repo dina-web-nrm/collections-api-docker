@@ -1,0 +1,60 @@
+dina-share:
+  image: tianon/true
+  volumes:
+    - ./mysql-datadir:/var/lib/mysql:z
+    - ./mysql-shr:/shr:z
+    - ./mysql-autoload:/docker-entrypoint-initdb.d:ro
+    - ./mysql-conf.d:/etc/mysql/conf.d:z
+    - ./deployments:/opt/jboss/wildfly/standalone/deployments/:z
+    - ./nginx-static:/usr/share/nginx/html:z
+
+dina-mysql:
+  image: mysql:latest
+  environment:
+    - MYSQL_ROOT_PASSWORD=password12
+    - MYSQL_DATABASE=dina_nrm
+    - MYSQL_USER=dina
+    - MYSQL_PASSWORD=dina
+  ports:
+    - "3306:3306"
+  volumes_from:
+    - dina-share
+
+dina-keycloak:
+  image: jboss/keycloak-mysql
+  environment:
+    - MYSQL_DATABASE=dina_user
+    - MYSQL_USER=dina
+    - MYSQL_PASSWORD=dina
+    - VIRTUAL_HOST=sso.dina-web
+    - VIRTUAL_PORT=8999
+  ports:
+    - "8999:8080"
+  link:
+    - mysql:dina-mysql
+  volumes_from:
+    - dina-share
+
+dina-wildfly:
+  image: jboss/wildfly
+  environment:
+    - VIRTUAL_HOST=dina-web,admin.dina-web
+    - VIRTUAL_PORT=8080,9990
+  ports:
+    - "8080:8080"
+    - "9990:9990"
+  link:
+    - dina-keycloak
+  volumes_from:
+    - dina-share
+
+dina-nginx-proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - dina-wildfly
+    - dina-keycloak
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
