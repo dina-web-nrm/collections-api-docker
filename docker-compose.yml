@@ -45,6 +45,7 @@ dina-wildfly:
     - "9990:9990"
   links:
     - dina-keycloak
+    - dina-mysql
   volumes_from:
     - dina-share
 
