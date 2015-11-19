@@ -30,8 +30,8 @@ dina-keycloak:
     - VIRTUAL_PORT=8999
   ports:
     - "8999:8080"
-  link:
-    - mysql:dina-mysql
+  links:
+    - dina-mysql:mysql
   volumes_from:
     - dina-share
 
@@ -43,7 +43,7 @@ dina-wildfly:
   ports:
     - "8080:8080"
     - "9990:9990"
-  link:
+  links:
     - dina-keycloak
   volumes_from:
     - dina-share
