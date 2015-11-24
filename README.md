@@ -38,10 +38,27 @@ For loading databases or other long running commands:
 	
 To connect to the database:
 
+	# NB: if running docker on Mac OS X, networking may not allow 
+	# using the below, if so, find ip with $(docker-machine ip dev-nfs)
+	
 	# connect from the host to the containerized mysql
-	mysql -u dina -p -D dina_nrm -h 127.0.0.1
+	mysql -u root -p -D dina_web -h 127.0.0.1
   	
 Export as a dump. This can be done either from the host, using the -B switch:
 
 	# run from the host
-  	mysql -B -u dina -pdina -h 127.0.0.1 -D dina_nrm -e "select * from [TABLE];" | pv > ADBlog.tsv
+  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > ADBlog.tsv
+
+To connect to Wildfly CLI:
+	
+	docker exec -it dwcollections_dina-wildfly_1 /opt/jboss/wildfly/bin/jboss.cli.sh --connect
+
+
+
+# Important
+
+After starting with `docker-compose up`, load data into `dina-web` with:
+
+	./populate_dina_web_db.sh
+
+This will be fixed soon... :)
