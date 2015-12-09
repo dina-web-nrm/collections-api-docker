@@ -47,7 +47,7 @@ To connect to the database:
 Export as a dump. This can be done either from the host, using the -B switch:
 
 	# run from the host
-  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > ADBlog.tsv
+  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > table.tsv
 
 To connect to Wildfly CLI:
 	
@@ -57,8 +57,13 @@ To connect to Wildfly CLI:
 
 # Important
 
-After starting with `docker-compose up`, load data into `dina-web` with:
+After starting with `docker-compose up`, load user data into `keycloak` with:
+
+	./populate_user_db.sh
+
+After starting with `docker-compose up`, load collections data into `dina-web` with:
 
 	./populate_dina_web_db.sh
 
-This will be fixed soon... :)
+
+Pls have a look, and submit improvements :)
