@@ -4,9 +4,11 @@ Integration project that bootstraps a database server with the DINA Collections 
 
 ## Background
 
-This project provides a way to start up the DINA-Web backbone with the database and a couple of services required to provide the DINA Collections REST API v 0.
+This project provides a way to start up the DINA-Web backbone - the DINA-Web Collections API REST web service v0 with the database and the KeyCloak component for managing users.
 
-## Step by step instructions
+# Step by step instructions
+
+## Install `docker`, `docker-compose` and `git`
 
 First get docker as per instructions at <http://docs.docker.com/linux/started/> or <http://docs.docker.com/windows/started/> or <http://docs.docker.com/mac/started/>, depending on the platform OS on the host.
 
@@ -22,11 +24,79 @@ First get docker as per instructions at <http://docs.docker.com/linux/started/> 
 	# add your user to the docker group so you can run docker without sudo
 	sudo usermod -aG docker my_user_name
 
-Then start the docker containers defined in the `docker-compose.yml` file.
+	# restart docker service
+	sudo service docker restart
 
-    	docker-compose up
+Then use git to install this repo
 
-For loading databases or other long running commands:
+	mkdir ~/repos
+	cd repos
+	git clone git@github.com:DINA-Web/dw-collections.git
+	cd cd-collections
+
+Before starting the services, load user data into `keycloak` with:
+
+	./populate_keycloak_db.sh
+
+Then load collections data into `dina-web` with:
+
+	./populate_dina_web_db.sh
+
+NB: The loading of data above is through db dumps which may require specific versions of Keycloak (1.6.1 Final) and MySQL...
+
+Then start services defined in the `docker-compose.yml` file.
+
+	# start with db
+    	docker-compose up dina-mysql
+	# wait till done, press Ctrl-Z then issue "bg" to run it in the background
+
+	docker-compose up dina-keycloak
+	# wait till done, press Ctrl-Z then issue "bg" to run it in the background
+
+	docker-compose up dina-wildfly
+	# wait till done, press Ctrl-Z then issue "bg" to run it in the background
+
+# GOTCHAs
+
+If you have an existing mysql running on 3306, stop it. Or edit the `docker-compose.yml` and change the db port used there everywhere...
+
+On Mac, you need to setup `docker-machine`, with a case-sensitive filesystem. Don't remember the exact steps, but this could have been [one](https://github.com/adlogix/docker-machine-nfs).
+
+If you are on a network that blocks DNS traffic you might need to reconfigure the docker daemon to use other nameservers:
+
+	sudo nano /etc/default/docker
+	# add a line like this to use your network's required DNS servers
+	DOCKER_OPTS="--dns 172.16.0.7 --dns 172.16.0.9 --dns 172.16.0.23"
+	# then save and exit and restart docker for this to take effect
+	sudo service docker restart
+
+# Maintenance operations
+
+## Manage the application server
+	
+To connect to Wildfly CLI, issue a command on the relevant running container:
+	
+	docker exec -it dwcollections_dina-wildfly_1 /opt/jboss/wildfly/bin/jboss-cli.sh --connect
+
+	# you can use the web admin ui with user "admin" and password "dina"
+	firefox localhost:9991
+
+## Manage the database
+
+To connect to the database from the host:
+
+	# NB: if running docker on Mac OS X, networking may not allow 
+	# using the below, if so, find ip with IP=$(docker-machine ip dev-nfs)
+	
+	# connect from the host to the containerized mysql
+	mysql -u root -p -D dina_web -h 127.0.0.1
+  	
+To export data as .sql dumps. This can be done from the host, using the -B switch:
+
+	# run from the host
+  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > table.tsv
+
+To load/dump databases or do other long running commands:
 
   	# run long running cmd in a screen session
   	screen
@@ -35,35 +105,9 @@ For loading databases or other long running commands:
   	./long_running_cmd.sh
   	# use Ctrl-C Ctrl-d to detach
 
-	
-To connect to the database:
 
-	# NB: if running docker on Mac OS X, networking may not allow 
-	# using the below, if so, find ip with $(docker-machine ip dev-nfs)
-	
-	# connect from the host to the containerized mysql
-	mysql -u root -p -D dina_web -h 127.0.0.1
-  	
-Export as a dump. This can be done either from the host, using the -B switch:
+# Improvements
 
-	# run from the host
-  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > table.tsv
-
-To connect to Wildfly CLI:
-	
-	docker exec -it dwcollections_dina-wildfly_1 /opt/jboss/wildfly/bin/jboss.cli.sh --connect
+Pls have a look, try it out, log any issues under this repo's Issues, or if you know the fix, submit your improvements :) 
 
 
-
-# Important
-
-After starting with `docker-compose up`, load user data into `keycloak` with:
-
-	./populate_user_db.sh
-
-After starting with `docker-compose up`, load collections data into `dina-web` with:
-
-	./populate_dina_web_db.sh
-
-
-Pls have a look, and submit improvements :)

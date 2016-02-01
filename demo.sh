@@ -11,3 +11,5 @@ TOKEN=$(echo $RESULT | sed 's/.*access_token":"//g' | sed 's/".*//g')
 curl -v -H "Authorization: bearer $TOKEN" \
 http://$IP:8181/dina-service/dina/v0/Collectionobject | json_pp
 
+# NOTE: to test authentication integration in a web UI, the test-client.war is used
+#firefox http://$IP:8181/test-client
