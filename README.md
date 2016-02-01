@@ -32,7 +32,9 @@ Then use git to install this repo
 	mkdir ~/repos
 	cd repos
 	git clone git@github.com:DINA-Web/dw-collections.git
-	cd cd-collections
+	cd dw-collections
+
+## Load data
 
 Before starting the services, load user data into `keycloak` with:
 
@@ -43,6 +45,8 @@ Then load collections data into `dina-web` with:
 	./populate_dina_web_db.sh
 
 NB: The loading of data above is through db dumps which may require specific versions of Keycloak (1.6.1 Final) and MySQL...
+
+## Start the system services
 
 Then start services defined in the `docker-compose.yml` file.
 
@@ -58,11 +62,9 @@ Then start services defined in the `docker-compose.yml` file.
 
 # GOTCHAs
 
-If you have an existing mysql running on 3306, stop it. Or edit the `docker-compose.yml` and change the db port used there everywhere...
-
-On Mac, you need to setup `docker-machine`, with a case-sensitive filesystem. Don't remember the exact steps, but this could have been [one](https://github.com/adlogix/docker-machine-nfs).
-
-If you are on a network that blocks DNS traffic you might need to reconfigure the docker daemon to use other nameservers:
+- If you have an existing mysql running on 3306, stop it. Or edit the `docker-compose.yml` and change the db port used there everywhere...
+- On Mac, you need to setup `docker-machine`, with a case-sensitive filesystem. Don't remember the exact steps, but this could have been [one](https://github.com/adlogix/docker-machine-nfs).
+- If you are on a network that blocks DNS traffic you might need to reconfigure the docker daemon to use other nameservers:
 
 	sudo nano /etc/default/docker
 	# add a line like this to use your network's required DNS servers
