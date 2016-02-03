@@ -14,5 +14,3 @@ docker exec -i dwcollections_dina-mysql_1 mysql -u root -ppassword12 -D dina_web
 
 echo "Removing sample data"
 rm mysql-autoload/DemoDatawImages.sql
-
-echo "Please run docker-compose up now"

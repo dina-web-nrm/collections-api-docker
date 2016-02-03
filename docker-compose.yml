@@ -23,14 +23,13 @@ dina-mysql:
     - dina-share
 
 dina-keycloak:
-  image: jboss/keycloak-mysql
+  image: jboss/keycloak-mysql:1.6.1.Final
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_DATABASE=keycloak
     - MYSQL_USER=keycloak
     - MYSQL_PASSWORD=keycloak
     - VIRTUAL_HOST=sso.dina-web
-    - VIRTUAL_PORT=8999
   ports:
     - "8080:8080"
     - "9990:9990"
@@ -43,7 +42,7 @@ dina-wildfly:
   build: .
   environment:
     - TZ=Europe/Stockholm
-    - VIRTUAL_HOST=dina-web,admin.dina-web
+    - VIRTUAL_HOST=api.dina-web,admin.dina-web
     - VIRTUAL_PORT=8080,9990
   ports:
     - "8181:8080"
@@ -51,3 +50,15 @@ dina-wildfly:
   links:
     - dina-keycloak
     - dina-mysql
+
+dina-proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - dina-wildfly
+    - dina-keycloak
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+
