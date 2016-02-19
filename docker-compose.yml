@@ -7,7 +7,6 @@ dina-share:
     - ./mysql-conf.d:/etc/mysql/conf.d:z
     - ./deployments:/opt/jboss/wildfly/standalone/deployments:z
     - ./wildfly-conf/configuration:/opt/keycloak/standalone/configuration:z
-    - ./nginx-static:/usr/share/nginx/html:z
 
 dina-mysql:
   image: mysql:latest
@@ -42,11 +41,8 @@ dina-wildfly:
   build: .
   environment:
     - TZ=Europe/Stockholm
-    - VIRTUAL_HOST=api.dina-web,admin.dina-web
-    - VIRTUAL_PORT=8080,9990
-  ports:
-    - "8181:8080"
-    - "9991:9990"
+    - VIRTUAL_HOST=api.dina-web
+    - VIRTUAL_PORT=8080
   links:
     - dina-keycloak
     - dina-mysql
