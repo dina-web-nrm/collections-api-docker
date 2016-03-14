@@ -5,11 +5,13 @@ dina-share:
     - ./mysql-shr:/shr:z
     - ./mysql-autoload:/docker-entrypoint-initdb.d:ro
     - ./mysql-conf.d:/etc/mysql/conf.d:z
+    - ./localdb-run.sh:/localdb-run.sh:rw
     - ./deployments:/opt/jboss/wildfly/standalone/deployments:z
     - ./wildfly-conf/configuration:/opt/keycloak/standalone/configuration:z
 
 dina-mysql:
   image: mysql:latest
+  command: "sh /localdb-run.sh"
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_ROOT_PASSWORD=password12

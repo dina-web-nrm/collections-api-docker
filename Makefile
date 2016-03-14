@@ -13,17 +13,20 @@ build:
 up:
 	echo "start db and load data, please be patient ... a couple of minutes ..."
 	docker-compose up -d dina-mysql
-	docker inspect --format '{{ .NetworkSettings.IPAddress }}:3306' dwcollections_dina-mysql_1 | xargs wget --retry-connrefused --tries=15 -q --waitretry=5
+#	docker inspect --format '{{ .NetworkSettings.IPAddress }}:3306' dwcollections_dina-mysql_1 | xargs wget --retry-connrefused --tries=15 -q --waitretry=5
+	sleep 5
 	./populate_dina_web_db.sh
 	./populate_keycloak_db.sh
 
 	echo "bringing up the SSO service"
 	docker-compose up -d dina-keycloak
-	wget --retry-connrefused --tries=15 --waitretry=5 -q "http://localhost:8080/auth"
+#	wget --retry-connrefused --tries=15 --waitretry=5 -q "http://localhost:8080/auth"
+	sleep 20
 
-	echo "bringing up application server, takes approx 30-40 s"
+	echo "bringing up application server, takes approx 30-50 s"
 	docker-compose up -d dina-wildfly
-	wget --retry-connrefused --tries=15 --waitretry=5 -q "http://localhost:8181/test-client"
+#	wget --retry-connrefused --tries=15 --waitretry=5 -q "http://localhost:8181/test-client"
+	sleep 50
 
 	echo "bringing up web server / proxy"
 	docker-compose up -d dina-proxy
