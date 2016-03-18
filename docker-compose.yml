@@ -9,6 +9,13 @@ dina-share:
     - ./deployments:/opt/jboss/wildfly/standalone/deployments:z
     - ./wildfly-conf/configuration:/opt/keycloak/standalone/configuration:z
 
+fs-api:
+  image: tianon/true
+  volumes:
+    - ./nginx-conf:/etc/nginx/conf.d:rw
+    - ./nginx-certs:/etc/nginx/ssl:rw
+    - ./nginx-logs:/etc/nginx/logs:rw
+
 dina-mysql:
   image: mysql:latest
   command: "sh /localdb-run.sh"
@@ -39,24 +46,22 @@ dina-keycloak:
   volumes_from:
     - dina-share
 
-dina-wildfly:
+as:
   build: .
   environment:
     - TZ=Europe/Stockholm
-    - VIRTUAL_HOST=api.dina-web
-    - VIRTUAL_PORT=8080
   links:
     - dina-keycloak
     - dina-mysql
 
-dina-proxy:
-  image: jwilder/nginx-proxy
-  ports:
-    - "80:80"
-    - "443:443"
+ws-api:
+  image: nginx
+  environment:
+    - VIRTUAL_HOST=beta-api.dina-web.net
+    - VIRTUAL_PORT=443
+    - VIRTUAL_PROTO=https
+    - CERT_NAME=shared
   links:
-    - dina-wildfly
-    - dina-keycloak
-  volumes:
-    - /var/run/docker.sock:/tmp/docker.sock:ro
-
+    - as
+  volumes_from:
+    - fs-api

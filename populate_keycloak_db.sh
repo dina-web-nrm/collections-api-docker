@@ -1,15 +1,15 @@
 #!/bin/bash
 
-gunzip keycloakdata.sql.gz
+gunzip keycloakdump.sql.gz
 
 echo "Loading keycloak data into dina-mysql container"
-docker-compose stop dina-mysql
-docker-compose start dina-mysql
+docker-compose stop db
+docker-compose start db
 sleep 5
 
 echo "Fix issue with Mac OS X nulls in mysql dumpfile"
 cat keycloakdump.sql | tr "\001" -d > users.sql
 
-docker exec -i dwcollections_dina-mysql_1 mysql -u root -ppassword12 -D keycloak < users.sql
+docker exec -i dwcollections_db_1 mysql -u root -ppassword12 -D keycloak < users.sql
 
 echo "Done loading user data"
