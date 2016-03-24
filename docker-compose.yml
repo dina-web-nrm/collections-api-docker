@@ -65,3 +65,10 @@ ws-api:
     - as
   volumes_from:
     - fs-api
+
+solr:
+  build: solr
+  links:
+    - dina-mysql:mysql
+  ports:
+    - "8983:8983"
