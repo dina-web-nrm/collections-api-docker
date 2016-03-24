@@ -84,7 +84,15 @@
         >
             <field column="t" name="entity_type" />
             <field column="id" name="id" />
-            
+
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN geographytreedef as gt ON gt.GeographyTreeDefID=d.GeographyTreeDefID
+                WHERE gt.GeographyTreeDefID=${geography.GeographyTreeDefID}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>
+
             <field column="GeographyID" name="primary_id" />
             <field column="GeographyCode" name="geo_geographyCode" />
             <field column="RankID" name="geo_rank" />

@@ -149,7 +149,7 @@
     <field name="entity_type" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
     
     <!-- Other common fields -->
-    <field name="disciplineID" type="string" indexed="false" stored="true" multiValued="false" />
+    <field name="disciplineID" type="string" indexed="false" stored="true" multiValued="true" />
     
     <copyField source="*" dest="_text_"/>
     <fieldType name="text_exact_fuzzy" class="solr.TextField" omitNorms="false">
