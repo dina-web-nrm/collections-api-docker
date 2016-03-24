@@ -26,6 +26,7 @@
                 ce.startDate as ce_startDate,
                 ce.EndDate as ce_endDate,
                 ce.CollectingEventID as primary_id,
+                ce.DisciplineID as DisciplineID,
                 lc.LocalityName as ce_lc_name,
                 lc.Latitude1 as ce_lc_latitude,
                 lc.Longitude1 as ce_lc_longitude,
@@ -39,6 +40,7 @@
                 ce.startDate as ce_startDate,
                 ce.EndDate as ce_endDate,
                 ce.CollectingEventID as primary_id,
+                ce.DisciplineID as DisciplineID,
                 lc.LocalityName as ce_lc_name,
                 lc.Latitude1 as ce_lc_latitude,
                 lc.Longitude1 as ce_lc_longitude,
@@ -56,7 +58,9 @@
             <field column="t" name="entity_type" />
             <field column="id" name="id" />
             <field column="primary_id" name="primary_id" />
-
+            
+            <field column="DisciplineID" name="disciplineID" />
+            
             <field column="ce_lc_latitude" name="ce_lc_latitude" />
             <field column="ce_lc_longitude" name="ce_lc_longitude" />
             <field column="ce_lc_name" name="ce_lc_name" />
@@ -94,6 +98,7 @@
                 lc.LocalityName as lc_name,
                 lc.Latitude1 as lc_latitude,
                 lc.Longitude1 as lc_longitude,
+                lc.DisciplineID as DisciplineID,
                 geo.FullName as geo_fullName,
                 'locality' as t,
                 CONCAT('lc_', lc.LocalityID) as id 
@@ -104,6 +109,7 @@
                 lc.LocalityName as lc_name,
                 lc.Latitude1 as lc_latitude,
                 lc.Longitude1 as lc_longitude,
+                lc.DisciplineID as DisciplineID,
                 geo.FullName as geo_fullName,
                 'locality' as t,
                 CONCAT('lc_', lc.LocalityID) as id 
@@ -115,6 +121,8 @@
         >
             <field column="t" name="entity_type" />
             <field column="id" name="id" />
+            
+            <field column="DisciplineID" name="disciplineID" />
             
             <field column="primary_id" name="primary_id" />
             <field column="lc_name" name="lc_name" />
