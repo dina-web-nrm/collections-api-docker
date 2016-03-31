@@ -41,6 +41,7 @@
                 ce.EndDate as ce_endDate,
                 ce.CollectingEventID as primary_id,
                 ce.DisciplineID as DisciplineID,
+                ce.Text1 as ce_givenName,
                 lc.LocalityName as ce_lc_name,
                 lc.Latitude1 as ce_lc_latitude,
                 lc.Longitude1 as ce_lc_longitude,
@@ -68,6 +69,7 @@
             
             <field column="ce_startDate" name="ce_startDate" />
             <field column="ce_endDate" name="ce_endDate" />
+            <field column="ce_givenName" name="ce_givenName" />
             <entity name="collector"
                 query="select CONCAT(ag.FirstName, ' ', ag.LastName) as agent_fullname 
                 FROM collector as co JOIN agent as ag ON ag.AgentID=co.AgentID 

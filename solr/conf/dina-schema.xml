@@ -131,6 +131,7 @@
     
     <field name="ce_startDate" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ce_endDate" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="ce_givenName" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ce_collectors" type="string" indexed="true" stored="true" multiValued="true" />
     
     <!-- Geography -->
