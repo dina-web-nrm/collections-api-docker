@@ -23,6 +23,7 @@
         <!-- Collecting Event -->
         <entity name="collectingevent" pk="CollectingEventID"
             query="SELECT
+                ce.method as ce_method,
                 ce.startDate as ce_startDate,
                 ce.EndDate as ce_endDate,
                 ce.CollectingEventID as primary_id,
@@ -37,6 +38,7 @@
             LEFT OUTER JOIN geography as geo ON lc.GeographyID=geo.GeographyID"
             
             deltaImportQuery="SELECT
+                ce.method as ce_method,
                 ce.startDate as ce_startDate,
                 ce.EndDate as ce_endDate,
                 ce.CollectingEventID as primary_id,
@@ -70,6 +72,8 @@
             <field column="ce_startDate" name="ce_startDate" />
             <field column="ce_endDate" name="ce_endDate" />
             <field column="ce_givenName" name="ce_givenName" />
+            <field column="ce_method" name="ce_method" />
+
             <entity name="collector"
                 query="select CONCAT(ag.FirstName, ' ', ag.LastName) as agent_fullname 
                 FROM collector as co JOIN agent as ag ON ag.AgentID=co.AgentID 

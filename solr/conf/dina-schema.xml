@@ -132,6 +132,7 @@
     <field name="ce_startDate" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ce_endDate" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ce_givenName" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="ce_method" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ce_collectors" type="string" indexed="true" stored="true" multiValued="true" />
     
     <!-- Geography -->
@@ -150,7 +151,7 @@
     <field name="entity_type" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
     
     <!-- Other common fields -->
-    <field name="disciplineID" type="string" indexed="false" stored="true" multiValued="true" />
+    <field name="disciplineID" type="string" indexed="true" multiValued="true" />
     
     <copyField source="*" dest="_text_"/>
     <fieldType name="text_exact_fuzzy" class="solr.TextField" omitNorms="false">
