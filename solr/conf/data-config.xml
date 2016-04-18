@@ -144,5 +144,79 @@
             <field column="lc_longitude" name="lc_longitude" />
             <field column="lc_geo_fullName" name="lc_geo_fullName" />
         </entity>
+
+        <!-- Chronostraigraphy -->
+        <entity name="geologictimeperiod" pk="GeologicTimeperiodID"
+            query="SELECT 
+                ch.GeologicTimeperiodID as primary_id,
+                ch.FullName as ch_name,
+                ch.GeologicTimePeriodTreeDefID as ch_treedef_id,
+                'geologictimeperiod' as t,
+                CONCAT('ch_', ch.GeologicTimeperiodID) as id 
+            FROM geologictimeperiod as ch"
+            
+            deltaImportQuery="SELECT 
+                ch.GeologicTimeperiodID as primary_id,
+                ch.FullName as ch_name,
+                ch.GeologicTimePeriodTreeDefID as ch_treedef_id,
+                'geologictimeperiod' as t,
+                CONCAT('ch_', ch.GeologicTimeperiodID) as id 
+            FROM geologictimeperiod as ch
+            WHERE GeologicTimeperiodID='${dih.delta.GeologicTimeperiodID}'"
+
+            deltaQuery="SELECT GeologicTimeperiodID FROM geologictimeperiod 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'">
+            
+            <field column="id" name="id" />
+            <field column="primary_id" name="primary_id" />
+            <field column="t" name="entity_type" />
+            <field column="ch_name" name="ch_name" />
+            
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN geologictimeperiodtreedef as gt
+                ON gt.GeologicTimePeriodTreeDefID=d.GeologicTimePeriodTreeDefID
+                WHERE gt.GeologicTimePeriodTreeDefID=${geologictimeperiod.ch_treedef_id}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>     
+        </entity>
+
+        <!-- Lithostratigraphy -->
+        <entity name="lihtostrat" pk="LithoStratID"
+            query="SELECT 
+                ch.LithoStratID as primary_id,
+                ch.FullName as li_name,
+                ch.LithoStratTreeDefID as li_treedef_id,
+                'lithostrat' as t,
+                CONCAT('li_', ch.LithoStratID) as id 
+            FROM lithostrat as ch"
+            
+            deltaImportQuery="SELECT 
+                ch.LithoStratID as primary_id,
+                ch.FullName as li_name,
+                ch.LithoStratTreeDefID as li_treedef_id,
+                'lithostrat' as t,
+                CONCAT('li_', ch.LithoStratID) as id 
+            FROM lithostrat as ch
+            WHERE LithoStratID='${dih.delta.LithoStratID}'"
+
+            deltaQuery="SELECT LithoStratID FROM lithostrat 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'">
+            
+            <field column="id" name="id" />
+            <field column="primary_id" name="primary_id" />
+            <field column="t" name="entity_type" />
+            <field column="li_name" name="li_name" />
+            
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN lithostrattreedef as lt
+                ON lt.LithoStratTreeDefID=d.LithoStratTreeDefID
+                WHERE lt.LithoStratTreeDefID=${lihtostrat.li_treedef_id}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>     
+        </entity>
     </document>
 </dataConfig>

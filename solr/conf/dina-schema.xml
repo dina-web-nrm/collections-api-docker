@@ -146,6 +146,12 @@
     <field name="lc_longitude" type="string" indexed="true" stored="true" multiValued="false" />
     <field name="lc_geo_fullName" type="string" indexed="true" stored="true" multiValued="false" />
 
+    <!-- Lithostratigraphy -->
+    <field name="li_name" type="string" indexed="true" stored="true" multiValued="false" />
+    
+    <!-- Chronostraigraphy -->
+    <field name="ch_name" type="string" indexed="true" stored="true" multiValued="false" />
+
     <!-- entity_type must exist on all for quicker search -->
     <field name="primary_id" type="string" indexed="false" stored="true" multiValued="false" />
     <field name="entity_type" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
