@@ -1,0 +1,222 @@
+<dataConfig>
+	<dataSource type="JdbcDataSource"
+   driver="com.mysql.jdbc.Driver"
+   url="jdbc:mysql://mysql/dina_web"
+   user="root"
+   password="password12"/>
+
+	<document name="default">
+        
+        <!--
+
+        All entites should contain an "id", "primary_id" and "entity_type"
+        
+        The "id" should be unique for solr, preferebly regular id + 'short_type'.
+        Eg. 9001_geo for a geography.
+        
+        The "primary_id" should be the real PK id for the entity. Togehter with
+        "entity_type" it should be possible to fetch the real record from the
+        database. 
+        
+        -->
+        
+        <!-- Collecting Event -->
+        <entity name="collectingevent" pk="CollectingEventID"
+            query="SELECT
+                ce.method as ce_method,
+                ce.startDate as ce_startDate,
+                ce.EndDate as ce_endDate,
+                ce.CollectingEventID as primary_id,
+                ce.DisciplineID as DisciplineID,
+                lc.LocalityName as ce_lc_name,
+                lc.Latitude1 as ce_lc_latitude,
+                lc.Longitude1 as ce_lc_longitude,
+                geo.FullName as ce_lc_geo_fullName,
+                'collectingevent' as t, CONCAT('ce_', CollectingEventID) as id
+            FROM collectingevent as ce 
+            LEFT OUTER JOIN locality as lc ON ce.LocalityID=lc.LocalityID
+            LEFT OUTER JOIN geography as geo ON lc.GeographyID=geo.GeographyID"
+            
+            deltaImportQuery="SELECT
+                ce.method as ce_method,
+                ce.startDate as ce_startDate,
+                ce.EndDate as ce_endDate,
+                ce.CollectingEventID as primary_id,
+                ce.DisciplineID as DisciplineID,
+                ce.Text1 as ce_givenName,
+                lc.LocalityName as ce_lc_name,
+                lc.Latitude1 as ce_lc_latitude,
+                lc.Longitude1 as ce_lc_longitude,
+                geo.FullName as ce_lc_geo_fullName,
+                'collectingevent' as t, CONCAT('ce_', CollectingEventID) as id
+            FROM collectingevent as ce 
+            LEFT OUTER JOIN locality as lc ON ce.LocalityID=lc.LocalityID
+            LEFT OUTER JOIN geography as geo ON lc.GeographyID=geo.GeographyID
+            WHERE CollectingEventID='${dih.delta.CollectingEventID}'"
+
+            deltaQuery="SELECT CollectingEventID FROM collectingevent 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'"
+        >
+
+            <field column="t" name="entity_type" />
+            <field column="id" name="id" />
+            <field column="primary_id" name="primary_id" />
+            
+            <field column="DisciplineID" name="disciplineID" />
+            
+            <field column="ce_lc_latitude" name="ce_lc_latitude" />
+            <field column="ce_lc_longitude" name="ce_lc_longitude" />
+            <field column="ce_lc_name" name="ce_lc_name" />
+            <field column="ce_lc_geo_fullName" name="ce_lc_geo_fullName" />
+            
+            <field column="ce_startDate" name="ce_startDate" />
+            <field column="ce_endDate" name="ce_endDate" />
+            <field column="ce_givenName" name="ce_givenName" />
+            <field column="ce_method" name="ce_method" />
+
+            <entity name="collector"
+                query="select CONCAT(ag.FirstName, ' ', ag.LastName) as agent_fullname 
+                FROM collector as co JOIN agent as ag ON ag.AgentID=co.AgentID 
+                WHERE co.CollectingEventID=${collectingevent.primary_id}"
+            >
+                <field column="agent_fullname" name="ce_collectors" />
+            </entity>
+        </entity>
+
+        <!-- Geography -->
+        <entity name="geography"
+            query="SELECT *, 'geography' as t, CONCAT('geo_', GeographyID) as id 
+            FROM geography"
+        >
+            <field column="t" name="entity_type" />
+            <field column="id" name="id" />
+
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN geographytreedef as gt ON gt.GeographyTreeDefID=d.GeographyTreeDefID
+                WHERE gt.GeographyTreeDefID=${geography.GeographyTreeDefID}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>
+
+            <field column="GeographyID" name="primary_id" />
+            <field column="GeographyCode" name="geo_geographyCode" />
+            <field column="RankID" name="geo_rank" />
+            <field column="FullName" name="geo_fullName" />
+        </entity>
+        
+        <!-- Locality -->
+        <entity name="locality" pk="LocalityID"
+            query="SELECT 
+                lc.LocalityID as primary_id,
+                lc.LocalityName as lc_name,
+                lc.Latitude1 as lc_latitude,
+                lc.Longitude1 as lc_longitude,
+                lc.DisciplineID as DisciplineID,
+                geo.FullName as geo_fullName,
+                'locality' as t,
+                CONCAT('lc_', lc.LocalityID) as id 
+            FROM locality as lc LEFT OUTER JOIN geography as geo ON lc.GeographyID=geo.GeographyID"
+            
+            deltaImportQuery="SELECT 
+                lc.LocalityID as primary_id,
+                lc.LocalityName as lc_name,
+                lc.Latitude1 as lc_latitude,
+                lc.Longitude1 as lc_longitude,
+                lc.DisciplineID as DisciplineID,
+                geo.FullName as geo_fullName,
+                'locality' as t,
+                CONCAT('lc_', lc.LocalityID) as id 
+            FROM locality as lc LEFT OUTER JOIN geography as geo ON lc.GeographyID=geo.GeographyID
+            WHERE LocalityID='${dih.delta.LocalityID}'"
+
+            deltaQuery="SELECT LocalityID FROM locality 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'"
+        >
+            <field column="t" name="entity_type" />
+            <field column="id" name="id" />
+            
+            <field column="DisciplineID" name="disciplineID" />
+            
+            <field column="primary_id" name="primary_id" />
+            <field column="lc_name" name="lc_name" />
+            <field column="lc_latitude" name="lc_latitude" />
+            <field column="lc_longitude" name="lc_longitude" />
+            <field column="lc_geo_fullName" name="lc_geo_fullName" />
+        </entity>
+
+        <!-- Chronostraigraphy -->
+        <entity name="geologictimeperiod" pk="GeologicTimeperiodID"
+            query="SELECT 
+                ch.GeologicTimeperiodID as primary_id,
+                ch.FullName as ch_name,
+                ch.GeologicTimePeriodTreeDefID as ch_treedef_id,
+                'geologictimeperiod' as t,
+                CONCAT('ch_', ch.GeologicTimeperiodID) as id 
+            FROM geologictimeperiod as ch"
+            
+            deltaImportQuery="SELECT 
+                ch.GeologicTimeperiodID as primary_id,
+                ch.FullName as ch_name,
+                ch.GeologicTimePeriodTreeDefID as ch_treedef_id,
+                'geologictimeperiod' as t,
+                CONCAT('ch_', ch.GeologicTimeperiodID) as id 
+            FROM geologictimeperiod as ch
+            WHERE GeologicTimeperiodID='${dih.delta.GeologicTimeperiodID}'"
+
+            deltaQuery="SELECT GeologicTimeperiodID FROM geologictimeperiod 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'">
+            
+            <field column="id" name="id" />
+            <field column="primary_id" name="primary_id" />
+            <field column="t" name="entity_type" />
+            <field column="ch_name" name="ch_name" />
+            
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN geologictimeperiodtreedef as gt
+                ON gt.GeologicTimePeriodTreeDefID=d.GeologicTimePeriodTreeDefID
+                WHERE gt.GeologicTimePeriodTreeDefID=${geologictimeperiod.ch_treedef_id}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>     
+        </entity>
+
+        <!-- Lithostratigraphy -->
+        <entity name="lihtostrat" pk="LithoStratID"
+            query="SELECT 
+                ch.LithoStratID as primary_id,
+                ch.FullName as li_name,
+                ch.LithoStratTreeDefID as li_treedef_id,
+                'lithostrat' as t,
+                CONCAT('li_', ch.LithoStratID) as id 
+            FROM lithostrat as ch"
+            
+            deltaImportQuery="SELECT 
+                ch.LithoStratID as primary_id,
+                ch.FullName as li_name,
+                ch.LithoStratTreeDefID as li_treedef_id,
+                'lithostrat' as t,
+                CONCAT('li_', ch.LithoStratID) as id 
+            FROM lithostrat as ch
+            WHERE LithoStratID='${dih.delta.LithoStratID}'"
+
+            deltaQuery="SELECT LithoStratID FROM lithostrat 
+            WHERE TimestampCreated &gt; '${dih.last_index_time}'">
+            
+            <field column="id" name="id" />
+            <field column="primary_id" name="primary_id" />
+            <field column="t" name="entity_type" />
+            <field column="li_name" name="li_name" />
+            
+            <entity name="discipline"
+                query="SELECT d.DisciplineID FROM discipline as d 
+                JOIN lithostrattreedef as lt
+                ON lt.LithoStratTreeDefID=d.LithoStratTreeDefID
+                WHERE lt.LithoStratTreeDefID=${lihtostrat.li_treedef_id}"
+            >
+                <field column="DisciplineID" name="disciplineID" />
+            </entity>     
+        </entity>
+    </document>
+</dataConfig>
