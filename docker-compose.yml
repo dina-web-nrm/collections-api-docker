@@ -31,13 +31,15 @@ dina-mysql:
     - dina-share
 
 dina-keycloak:
-  image: jboss/keycloak-mysql:1.6.1.Final
+  build: keycloak
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_DATABASE=keycloak
     - MYSQL_USER=keycloak
     - MYSQL_PASSWORD=keycloak
-    - VIRTUAL_HOST=sso.dina-web
+    - VIRTUAL_HOST=sso
+    - VIRTUAL_PORT=8080
+    - VIRTUAL_PROTO=https
   ports:
     - "8080:8080"
     - "9990:9990"
