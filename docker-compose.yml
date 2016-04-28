@@ -47,7 +47,7 @@ dina-keycloak:
     - dina-share
 
 as:
-  build: .
+  image: dina/collections-api
   environment:
     - TZ=Europe/Stockholm
   links:
@@ -63,6 +63,7 @@ ws-api:
     - CERT_NAME=shared
   links:
     - as
+    - solr
   volumes_from:
     - fs-api
 
