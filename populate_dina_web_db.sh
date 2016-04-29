@@ -5,12 +5,12 @@ wget https://github.com/DINA-Web/datasets/raw/master/specify/DemoDatawImages.sql
 gunzip DemoDatawImages.sql.gz
 mv DemoDatawImages.sql mysql-autoload
 
-echo "Loading sample data into dina-mysql container"
-docker-compose stop dina-mysql
-docker-compose start dina-mysql
+echo "Loading sample data into database container"
+docker-compose stop db
+docker-compose start db
 sleep 5
-docker exec -i dwcollections_dina-mysql_1 mysql -u root -ppassword12 -e "create database dina_web;"
-docker exec -i dwcollections_dina-mysql_1 mysql -u root -ppassword12 -D dina_web < mysql-autoload/DemoDatawImages.sql
+docker exec -i dwcollections_db_1 mysql -u root -ppassword12 -e "create database dina_web;"
+docker exec -i dwcollections_db_1 mysql -u root -ppassword12 -D dina_web < mysql-autoload/DemoDatawImages.sql
 
 echo "Removing sample data"
 rm mysql-autoload/DemoDatawImages.sql

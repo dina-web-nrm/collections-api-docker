@@ -1,4 +1,4 @@
-dina-share:
+fs-share:
   image: tianon/true
   volumes:
     - ./mysql-datadir:/var/lib/mysql:z
@@ -16,7 +16,7 @@ fs-api:
     - ./nginx-certs:/etc/nginx/ssl:rw
     - ./nginx-logs:/etc/nginx/logs:rw
 
-dina-mysql:
+db:
   image: mysql:latest
   command: "sh /localdb-run.sh"
   environment:
@@ -25,36 +25,34 @@ dina-mysql:
     - MYSQL_DATABASE=keycloak
     - MYSQL_USER=keycloak
     - MYSQL_PASSWORD=keycloak
-  ports:
-    - "3306:3306"
   volumes_from:
-    - dina-share
+    - fs-share
 
-dina-keycloak:
+sso:
   image: dina/keycloak
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_DATABASE=keycloak
     - MYSQL_USER=keycloak
     - MYSQL_PASSWORD=keycloak
-    - VIRTUAL_HOST=sso
+    - VIRTUAL_HOST=beta-sso.dina-web.net
     - VIRTUAL_PORT=8080
     - VIRTUAL_PROTO=https
   ports:
     - "8080:8080"
     - "9990:9990"
   links:
-    - dina-mysql:mysql
+    - db:mysql
   volumes_from:
-    - dina-share
+    - fs-share
 
 as:
   image: dina/collections-api
   environment:
     - TZ=Europe/Stockholm
   links:
-    - dina-keycloak
-    - dina-mysql
+    - sso
+    - db:dina-mysql
 
 ws-api:
   image: nginx
@@ -72,6 +70,6 @@ ws-api:
 solr:
   image: dina/collections-solr
   links:
-    - dina-mysql:mysql
+    - db:mysql
   ports:
     - "8983:8983"
