@@ -68,7 +68,7 @@ ws-api:
     - fs-api
 
 solr:
-  build: solr
+  image: dina/collections-solr
   links:
     - dina-mysql:mysql
   ports:
