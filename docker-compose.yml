@@ -31,7 +31,7 @@ dina-mysql:
     - dina-share
 
 dina-keycloak:
-  build: keycloak
+  image: dina/keycloak
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_DATABASE=keycloak
