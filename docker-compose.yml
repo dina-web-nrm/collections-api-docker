@@ -37,10 +37,8 @@ sso:
     - MYSQL_PASSWORD=keycloak
     - VIRTUAL_HOST=beta-sso.dina-web.net
     - VIRTUAL_PORT=8080
-    - VIRTUAL_PROTO=https
   ports:
     - "8080:8080"
-    - "9990:9990"
   links:
     - db:mysql
   volumes_from:
@@ -50,9 +48,15 @@ as:
   image: dina/collections-api
   environment:
     - TZ=Europe/Stockholm
+  ports:
+    - "9990:9990"
   links:
     - sso
     - db:dina-mysql
+
+
+
+
 
 ws-api:
   image: nginx
