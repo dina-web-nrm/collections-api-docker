@@ -37,10 +37,6 @@ sso:
     - MYSQL_PASSWORD=keycloak
     - VIRTUAL_HOST=beta-sso.dina-web.net
     - VIRTUAL_PORT=8080
-    - VIRTUAL_PROTO=https
-  ports:
-    - "8080:8080"
-    - "9990:9990"
   links:
     - db:mysql
   volumes_from:
@@ -58,9 +54,6 @@ ws-api:
   image: nginx
   environment:
     - VIRTUAL_HOST=beta-api.dina-web.net
-    - VIRTUAL_PORT=443
-    - VIRTUAL_PROTO=https
-    - CERT_NAME=shared
   links:
     - as
     - solr
