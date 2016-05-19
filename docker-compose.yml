@@ -62,9 +62,6 @@ ws-api:
   image: nginx
   environment:
     - VIRTUAL_HOST=beta-api.dina-web.net
-    - VIRTUAL_PORT=443
-    - VIRTUAL_PROTO=https
-    - CERT_NAME=dina-web.net
   links:
     - as
     - solr
