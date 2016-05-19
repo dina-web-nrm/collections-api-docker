@@ -64,7 +64,7 @@ ws-api:
     - VIRTUAL_HOST=beta-api.dina-web.net
     - VIRTUAL_PORT=443
     - VIRTUAL_PROTO=https
-    - CERT_NAME=shared
+    - CERT_NAME=dina-web.net
   links:
     - as
     - solr

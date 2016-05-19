@@ -6,6 +6,10 @@ clean: stop rm
 build:
 	sudo chown -R $(ME) mysql-datadir
 
+keycloak-data-dump:
+	@echo "Dumping mysql database from KeyCloak server"
+	docker exec -it dwcollections_db_1 sh -c "mysqldump -u keycloak -pkeycloak keycloak > /shr/keycloak.sql"
+
 up:
 	echo "start db and load data, please be patient ... a couple of minutes ..."
 	docker-compose up -d db

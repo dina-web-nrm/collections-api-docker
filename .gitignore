@@ -1,5 +1,4 @@
 mysql-datadir/
-*.sql
 *-certs/*
 *.pem
 *.key
