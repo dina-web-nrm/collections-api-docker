@@ -8,74 +8,54 @@ This project provides a way to start up the DINA-Web backbone - the DINA-Web Col
 
 # Step by step instructions
 
-## Install `docker`, `docker-compose` and `git`
+## Install `docker`, `docker-compose`, `git` and `make`
 
-First get docker as per instructions at <http://docs.docker.com/linux/started/> or <http://docs.docker.com/windows/started/> or <http://docs.docker.com/mac/started/>, depending on the platform OS on the host.
+Use instructions from <http://docs.docker.com/linux/started/> etc to install the above applications.
 
-		# if on linux (use installers on Win or Mac)
-		wget -qO- https://get.docker.com/ | sh
-
-		# get docker-compose
-		sudo -i
-		curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-		chmod +x /usr/local/bin/docker-compose	
-		exit
-
-		# add your user to the docker group so you can run docker without sudo
-		sudo usermod -aG docker my_user_name
-
-		# restart docker service
-		sudo service docker restart
-
-Then use git to install this repo
+Example use of git to get this repo:
 
 		mkdir ~/repos
 		cd repos
 		git clone git@github.com:DINA-Web/dw-collections.git
 		cd dw-collections
 
-## Load data
+## Setting up service names
 
-Before starting the services, load user data into `keycloak` with:
+You may also need to set up name resolution. If running locally, you can edit /etc/host to add names, such as
+		sudo nano /etc/hosts
+		# then add names like "beta-sso.dina-web.net" and "beta-api.dina-web.net"
 
-		./populate_keycloak_db.sh
+## SSL
 
-Then load collections data into `dina-web` with:
+For SSL to work properly, you need to check out `dw-proxy` and make sure your `.crt` and `.key` files are in the `certs` directory, then start the reverse proxy with `make`.
 
-		./populate_dina_web_db.sh
+## Managing services
 
-NB: The loading of data above is through db dumps which may require specific versions of Keycloak (1.6.1 Final) and MySQL...
+The `Makefile` contains available targets or actions for managing the various services:
 
-## Start the system services
+		# to initialize, build and start services		
+		make 
+		
+		# to stop, remove and clean
+		make clean
 
-Then start services defined in the `docker-compose.yml` file.
+You can also perform actions separately beyond the above.
 
-	    	docker-compose up dina-mysql
-		# wait till done, press Ctrl-Z then issue "bg" to run it in the background
+### Loading Collections data in a separate step:
 
-		docker-compose up dina-keycloak
+		# to load Specify6/7 demo data
+		make images-import
 
-		# ... Ctrl-Z + "bg"
+		# to load DINA-Web sample data
+		make collections-import
 
-		docker-compose up dina-wildfly
+		# to add a "reporter" user and use it to fetch data from the API
+		make reporter-import
+		make reporter-test
 
-		# ... Ctrl-Z + "bg"
+Various other maintenance operations which are not available in the Makefile might be required at times.
 
-# GOTCHAs
-
-- If you have an existing mysql running on 3306, stop it. Or edit the `docker-compose.yml` and change the db port used there everywhere...
-- On Mac, you need to setup `docker-machine`, with a case-sensitive filesystem. Don't remember the exact steps, but this could have been [one](https://github.com/adlogix/docker-machine-nfs).
-- If you are on a network that blocks DNS traffic you might need to reconfigure the docker daemon to use other nameservers:
-
-		sudo nano /etc/default/docker
-		# add a line like this to use your network's required DNS servers
-		DOCKER_OPTS="--dns 172.16.0.7 --dns 172.16.0.9 --dns 172.16.0.23"
-		# then save and exit and restart docker for this to take effect
-		sudo service docker restart
-
-# Maintenance operations
-
-## Manage the application server
+### Manage the application server
 	
 To connect to Wildfly CLI, issue a command on the relevant running container:
 	
@@ -87,9 +67,6 @@ To connect to Wildfly CLI, issue a command on the relevant running container:
 ## Manage the database
 
 To connect to the database from the host:
-
-		# NB: if running docker on Mac OS X, networking may not allow 
-		# using the below, if so, find ip with IP=$(docker-machine ip dev-nfs)
 	
 		# connect from the host to the containerized mysql
 		mysql -u root -p -D dina_web -h 127.0.0.1
@@ -97,7 +74,7 @@ To connect to the database from the host:
 To export data as .sql dumps. This can be done from the host, using the -B switch:
 
 		# run from the host
-	  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > table.tsv
+	  	mysql -B -u root -ppassword12 -h 127.0.0.1 -D dina_web -e "select * from [TABLE];" | pv > /shr/table.tsv
 
 To load/dump databases or do other long running commands:
 
