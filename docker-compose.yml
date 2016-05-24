@@ -1,24 +1,19 @@
-fs-share:
+fs:
   image: tianon/true
   volumes:
-    - ./mysql-datadir:/var/lib/mysql:z
-    - ./mysql-shr:/shr:z
+    - ./mysql-datadir:/var/lib/mysql
+    - ./mysql-shr:/shr
     - ./mysql-autoload:/docker-entrypoint-initdb.d:ro
-    - ./mysql-conf.d:/etc/mysql/conf.d:z
-    - ./localdb-run.sh:/localdb-run.sh:rw
-    - ./deployments:/opt/jboss/wildfly/standalone/deployments:z
-    - ./wildfly-conf/configuration:/opt/keycloak/standalone/configuration:z
 
 fs-api:
   image: tianon/true
   volumes:
-    - ./nginx-conf:/etc/nginx/conf.d:rw
-    - ./nginx-certs:/etc/nginx/ssl:rw
-    - ./nginx-logs:/etc/nginx/logs:rw
+    - ./nginx-conf:/etc/nginx/conf.d
+    - ./nginx-certs:/etc/nginx/ssl
+    - ./nginx-logs:/etc/nginx/logs
 
 db:
-  image: mysql:latest
-  command: "sh /localdb-run.sh"
+  image: mysql
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_ROOT_PASSWORD=password12
@@ -26,26 +21,24 @@ db:
     - MYSQL_USER=keycloak
     - MYSQL_PASSWORD=keycloak
   volumes_from:
-    - fs-share
+    - fs
 
 sso:
   image: dina/keycloak
   environment:
     - TZ=Europe/Stockholm
     - MYSQL_DATABASE=keycloak
-    - MYSQL_USER=keycloak
+    - MYSQL_USERNAME=keycloak
     - MYSQL_PASSWORD=keycloak
     - VIRTUAL_HOST=beta-sso.dina-web.net
     - VIRTUAL_PORT=8080
-  ports:
-    - "8080:8080"
   links:
     - db:mysql
   volumes_from:
-    - fs-share
+    - fs
 
 as:
-  image: dina/collections-api
+  image: dina/collections-api:v0.1.9
   environment:
     - TZ=Europe/Stockholm
   ports:
@@ -53,10 +46,6 @@ as:
   links:
     - sso
     - db:dina-mysql
-
-
-
-
 
 ws-api:
   image: nginx
