@@ -1,15 +1,16 @@
 #!/bin/bash
 
-#IP=$(docker-machine env dev-nfs && docker-machine ip)
-IP=127.0.0.1
+SSO_API="https://beta-sso.dina-web.net/auth/realms/dina/tokens/grants/access"
+DW_API="https://beta-api.dina-web.net/collections/v0"
 
-RESULT=$(curl --data "grant_type=password&client_id=dina-rest-endpoint&username=reporter&password=reporter" http://$IP:8080/auth/realms/dina/tokens/grants/access)
-#<http://192.168.99.100:8080/auth/realms/dina/tokens/grants/access%60>
+RESULT=$(curl -s --data "grant_type=password&client_id=dina-rest&username=reporter&password=markus" \
+	$SSO_API)
 
 TOKEN=$(echo $RESULT | sed 's/.*access_token":"//g' | sed 's/".*//g')
 
-curl -v -H "Authorization: bearer $TOKEN" \
-http://$IP:8181/dina-service/dina/v0/Collectionobject | json_pp
+echo "Got token:"
+echo $TOKEN
 
-# NOTE: to test authentication integration in a web UI, the test-client.war is used
-#firefox http://$IP:8181/test-client
+echo "Getting data from API:"
+curl -s -H "Authorization: Bearer $TOKEN" \
+	$DW_API/agent/1 | json_pp
