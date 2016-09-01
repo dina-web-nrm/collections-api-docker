@@ -11,7 +11,15 @@ start-db:
 	docker-compose up -d db
 	sleep 15
 
+cache:
+	@echo "Getting deps for CLI tool for batch upload of user data"
+	test -f KeycloakAdmin.jar || \
+		wget https://github.com/DINA-Web/collections-api/releases/download/v0.2.12/KeycloakAdmin.jar
+	test -f univocity-parsers-2.0.2.jar || \
+		wget http://central.maven.org/maven2/com/univocity/univocity-parsers/2.0.2/univocity-parsers-2.0.2.jar
+
 build:
+	docker build --tag dina/keycloak-cli .
 
 up: start-db
 
@@ -37,6 +45,11 @@ sso-import:
 	@echo "Importing KeyCloak data into mysql"
 	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
 		-D keycloak < mysql-shr/keycloak.sql
+
+sso-import-csv:
+	
+	@echo "Importing userdata into KeyCloak from tab separated text file"
+	docker run --rm -it dina/keycloak-cli
 
 reporter-import:
 
