@@ -1,6 +1,6 @@
 ME = $(USER)
 
-all: init build up
+all: cache init build up
 clean: stop rm
 
 init: start-db collections-import sso-import
@@ -13,9 +13,9 @@ start-db:
 
 cache:
 	@echo "Getting deps for CLI tool for batch upload of user data"
-	test -f KeycloakAdmin.jar || \
-		wget https://github.com/DINA-Web/collections-api/releases/download/v0.2.12/KeycloakAdmin.jar
-	test -f univocity-parsers-2.0.2.jar || \
+	test -f KeycloakAdmin.one-jar.jar || \
+		wget https://github.com/DINA-Web/collections-api/releases/download/v0.2.13/KeycloakAdmin.one-jar.jar
+#	test -f univocity-parsers-2.0.2.jar || \
 		wget http://central.maven.org/maven2/com/univocity/univocity-parsers/2.0.2/univocity-parsers-2.0.2.jar
 
 build:
@@ -37,13 +37,13 @@ up: start-db
 sso-export:
 
 	@echo "Exporting KeyCloak data from mysql"
-	docker exec -it dwcollections_db_1 sh -c \
+	docker exec -it collectionsapidocker_db_1 sh -c \
 		"mysqldump -u keycloak -pkeycloak keycloak > /shr/keycloak.sql"
 
 sso-import:
 
 	@echo "Importing KeyCloak data into mysql"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-D keycloak < mysql-shr/keycloak.sql
 
 sso-import-csv:
@@ -54,7 +54,7 @@ sso-import-csv:
 reporter-import:
 
 	@echo "Importing KeyCloak data into mysql"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-D keycloak < mysql-shr/kc_reporter.sql
 
 reporter-test:
@@ -70,9 +70,9 @@ collections-import:
 	mv dina_web.sql mysql-shr
 
 	@echo "Loading image sample data into database container"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-e "create database if not exists dina_web;"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-D dina_web < mysql-shr/dina_web.sql
 
 images-import:
@@ -84,9 +84,9 @@ images-import:
 	mv DemoDatawImages.sql mysql-shr
 
 	@echo "Loading image sample data into database container"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-e "create database if not exists dina_web;"
-	docker exec -i dwcollections_db_1 mysql -u root -ppassword12 \
+	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
 		-D dina_web < mysql-shr/DemoDatawImages.sql
 
 stop:
