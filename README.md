@@ -16,8 +16,8 @@ Example use of git to get this repo:
 
 		mkdir ~/repos
 		cd repos
-		git clone git@github.com:DINA-Web/dw-collections.git
-		cd dw-collections
+		git clone git@github.com:DINA-Web/collections-api-docker.git
+		cd collections-api-docker
 
 ## Setting up service names
 
@@ -27,7 +27,7 @@ You may also need to set up name resolution. If running locally, you can edit /e
 
 ## SSL
 
-For SSL to work properly, you need to check out `dw-proxy` and make sure your `.crt` and `.key` files are in the `certs` directory, then start the reverse proxy with `make`.
+For SSL to work properly, you need to check out `proxy-docker` and make sure your `.crt` and `.key` files are in the `certs` directory, then start the reverse proxy with `make`.
 
 ## Managing services
 
@@ -54,6 +54,10 @@ You can also perform actions separately beyond the above.
 		make reporter-test
 
 Various other maintenance operations which are not available in the Makefile might be required at times.
+
+### Loading users:
+
+A CLI tools is available to load user data from tab separated text files (tsv).
 
 ### Manage the application server
 	
