@@ -1,4 +1,5 @@
 ME = $(USER)
+PWD = $(shell pwd)
 
 all: cache init build up
 clean: stop rm
@@ -49,7 +50,11 @@ sso-import:
 sso-import-csv:
 	
 	@echo "Importing userdata into KeyCloak from tab separated text file"
-	docker run --rm -it dina/keycloak-cli
+	#docker run --rm -it dina/keycloak-cli
+	docker run --rm -it \
+		-v $(PWD)/users.tsv:/tmp/users.tsv \
+		dina/keycloak-cli java -jar KeycloakAdmin.one-jar.jar https://beta-sso.dina-web.net/auth /tmp/users.tsv
+
 
 reporter-import:
 
@@ -65,9 +70,10 @@ reporter-test:
 collections-import:
 
 	@echo "Importing sample Collections data"
-	curl --progress-bar -L http://archive.org/download/dw-collectionsdata/dina_web.sql.gz -o dina_web.sql.gz
-	gunzip dina_web.sql.gz
-	mv dina_web.sql mysql-shr
+	test -f ./mysql-shr/dina_web.sql || \
+		(curl -o dina_web.sql.gz --progress-bar -L \
+			http://archive.org/download/dw-collectionsdata/dina_web.sql.gz && \
+		gunzip dina_web.sql.gz && mv dina_web.sql mysql-shr)
 
 	@echo "Loading image sample data into database container"
 	docker exec -i collectionsapidocker_db_1 mysql -u root -ppassword12 \
