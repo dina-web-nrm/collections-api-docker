@@ -33,14 +33,14 @@ sso:
     - VIRTUAL_HOST=beta-sso.dina-web.net
     - VIRTUAL_PORT=8080
   links:
-    - db:mysql
+    - db:mysql  
   volumes_from:
     - fs
 
 as:
-  image: dina/collections-api:v0.1.9
+  image: dina/collections-api:v0.2.25
   environment:
-    - TZ=Europe/Stockholm
+    - TZ=Europe/Stockholm  
   ports:
     - "9990:9990"
   links:
@@ -53,7 +53,7 @@ ws-api:
     - VIRTUAL_HOST=beta-api.dina-web.net
   links:
     - as
-    - solr
+    - solr  
   volumes_from:
     - fs-api
 

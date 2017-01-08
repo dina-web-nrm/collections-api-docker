@@ -15,7 +15,7 @@ start-db:
 cache:
 	@echo "Getting deps for CLI tool for batch upload of user data"
 	test -f KeycloakAdmin.one-jar.jar || \
-		wget https://github.com/DINA-Web/collections-api/releases/download/v0.2.13/KeycloakAdmin.one-jar.jar
+		wget https://github.com/DINA-Web/collections-api/releases/download/v0.2.18/KeycloakAdmin.one-jar.jar
 #	test -f univocity-parsers-2.0.2.jar || \
 		wget http://central.maven.org/maven2/com/univocity/univocity-parsers/2.0.2/univocity-parsers-2.0.2.jar
 
