@@ -5,7 +5,7 @@ DW := $(DB) -D dina_web
 KC := $(DB) -D keycloak
 PWD := $(shell pwd)
 
-all: load-empty-collections load-accounts-keycloak
+all: download-ia load-empty-collections load-accounts-keycloak
 
 load-may19:
 	$(DW) < dina-labb-dump-05-19.sql
