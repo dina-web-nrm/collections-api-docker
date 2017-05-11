@@ -18,7 +18,7 @@ load-users:
 
 load-empty-collections:
 	docker exec -i collectionsapidocker_db_1 \
-		mysql -u root -ppassword12 -e "create database dina_web;"
+		mysql -u root -ppassword12 -e "create database if not exists dina_web;"
 	$(DW) < Dump20160520-3.sql
 
 load-accounts-keycloak:

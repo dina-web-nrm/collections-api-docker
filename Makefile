@@ -19,7 +19,7 @@ init:
 	@echo "Initial start - populating data"
 	echo "start db and load data, please be patient ... a couple of minutes ..."
 	docker-compose up -d db
-	sleep 5
+	sleep 10
 	make -C testdata
 
 up:
