@@ -42,7 +42,7 @@ sso:
     - fs-share
 
 as:
-  image: dina/collections-api:v0.1.9
+  image: dina/collections-api-deprecated
   environment:
     - TZ=Europe/Stockholm
   links:
