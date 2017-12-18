@@ -39,8 +39,11 @@ up:
 	docker-compose up -d ws-api
 
 stop:
-	docker-compose stop
+	@docker-compose stop
 
 rm:
-	docker-compose rm -vf
+	@docker-compose rm -vf
+
+down:
+	docker-compose down
 
