@@ -2,3 +2,5 @@ mysql-datadir/
 *-certs/*
 *.pem
 *.key
+
+Dump20160520-3.sql
