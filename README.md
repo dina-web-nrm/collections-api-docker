@@ -67,6 +67,8 @@ A script is provided, `demo.sh`, which authenticates with the single-sign on ser
 		# note that the script assumes self-signed SSL certificate being used
 		# (--cacert /tmp/certs/ca.pem should be removed if using commercial certs)
 		./demo.sh
+### The SSO (Keycloak)
+The configurations are in this project : https://github.com/DINA-Web/keycloak
 
 ### Manage the application server
 	
